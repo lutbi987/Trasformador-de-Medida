@@ -1,0 +1,135 @@
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+
+const unidades = [
+  'Milímetro',
+  'Litro',
+  'Mililitro',
+  'Centímetro',
+  'Metro',
+  'Quilômetro',
+  'Decâmetro',
+  'Polegada',
+  'Joule',
+  'Segundos',
+  'Minuto',
+  'Horas',
+];
+
+const fatoresMetro = {
+  'Milímetro': 0.001,
+  'Centímetro': 0.01,
+  'Metro': 1,
+  'Quilômetro': 1000,
+  'Decâmetro': 10,
+  'Polegada': 0.0254,
+};
+
+export default function ConversorMedidas() {
+  const [valor, setValor] = useState('');
+  const [de, setDe] = useState('Milímetro');
+  const [para, setPara] = useState('Metro');
+  const [resultado, setResultado] = useState(null);
+
+  const converter = () => {
+    const val = parseFloat(valor);
+    if (!isNaN(val) && fatoresMetro[de] && fatoresMetro[para]) {
+      const emMetros = val * fatoresMetro[de];
+      const convertido = emMetros / fatoresMetro[para];
+      setResultado(`${convertido} ${para.toUpperCase()}`);
+    } else {
+      setResultado('Conversão não suportada');
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.titulo}>Conversão De Medidas</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Insira o valor"
+        placeholderTextColor="#aaa"
+        keyboardType="numeric"
+        value={valor}
+        onChangeText={setValor}
+      />
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={de}
+          style={styles.picker}
+          dropdownIconColor="#fff"
+          onValueChange={(itemValue) => setDe(itemValue)}>
+          {unidades.map((u) => (
+            <Picker.Item key={u} label={u} value={u} color="#fff" />
+          ))}
+        </Picker>
+        <Picker
+          selectedValue={para}
+          style={styles.picker}
+          dropdownIconColor="#fff"
+          onValueChange={(itemValue) => setPara(itemValue)}>
+          {unidades.map((u) => (
+            <Picker.Item key={u} label={u} value={u} color="#fff" />
+          ))}
+        </Picker>
+      </View>
+      <TouchableOpacity style={styles.botao} onPress={converter}>
+        <Text style={styles.textoBotao}>RESULTAR</Text>
+      </TouchableOpacity>
+      {resultado && <Text style={styles.resultado}>Resultado: {resultado}</Text>}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#000',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  titulo: {
+    color: '#fff',
+    fontSize: 24,
+    marginBottom: 20,
+    fontWeight: 'bold',
+  },
+  input: {
+    backgroundColor: '#222',
+    color: '#fff',
+    width: '80%',
+    marginVertical: 10,
+    padding: 10,
+    borderRadius: 5,
+    textAlign: 'center',
+  },
+  pickerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  picker: {
+    flex: 1,
+    backgroundColor: '#222',
+    margin: 5,
+    color: '#fff',
+  },
+  botao: {
+    backgroundColor: '#fff',
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  textoBotao: {
+    color: '#000',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  resultado: {
+    color: '#fff',
+    fontSize: 20,
+    marginTop: 20,
+  },
+});
